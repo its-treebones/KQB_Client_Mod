@@ -19,7 +19,7 @@ namespace SteamClientMod
 {
     [HarmonyPatch(typeof(LiquidBit.KillerQueenX.SteamClient))]
     [HarmonyPatch("SteamAuth")]
-    public static class SteamClient_Patch
+    public class SteamClient_Patch
     {
 
         static bool Prefix(LiquidBit.KillerQueenX.SteamClient __instance, Action onSuccess, Action onFailure) 
@@ -50,30 +50,31 @@ namespace SteamClientMod
                 " length: ",
                 steamAuthTicket.Length
             }));
-            GameManager.GMInstance.StartCoroutine(SteamClient_Patch.GetAvatarAndLogin(__instance, onSuccess, onFailure));
+            GameManager.GMInstance.StartCoroutine(GetAvatarAndLogin(__instance, steamAuthTicket, onSuccess, onFailure));
             return false;
         }
 
-        public static IEnumerator GetAvatarAndLogin(LiquidBit.KillerQueenX.SteamClient __instance, Action onSuccess, Action onFailure)
+        public static IEnumerator GetAvatarAndLogin(LiquidBit.KillerQueenX.SteamClient __instance, String steamAuthTicket, Action onSuccess, Action onFailure)
         {
-            Client nakamaClient = new Nakama.Client("https", "kqb-nakama.fly.dev", 7350, "XXXXXXXXXXXXXXXX");
+            string serverkey = "";
+            Client nakamaClient = new Nakama.Client("https", "kqb-nakama.fly.dev", 7350, serverkey);
             var deviceId = PlayerPrefs.GetString("deviceId", SystemInfo.deviceUniqueIdentifier);
             string steamId = SteamUser.GetSteamID().ToString();
             PlayerPrefs.SetString("deviceId", deviceId);
             PlayerPrefs.SetString("steamId", steamId);
 
-            AuthenticateWithDevice(__instance, nakamaClient, onSuccess, onFailure);
+            AuthenticateWithSteam(__instance, steamAuthTicket, nakamaClient, onSuccess, onFailure);
             yield break;
         }
 
         // nakama stuff
-        public static async void AuthenticateWithDevice(LiquidBit.KillerQueenX.SteamClient __instance, Client client, Action onSuccess, Action onFailure)
+        public static async void AuthenticateWithSteam(LiquidBit.KillerQueenX.SteamClient __instance, string steamAuthTicket, Client client, Action onSuccess, Action onFailure)
         {
 
             // Authenticate with the Nakama server using Device Authentication.
             try
             {
-                Session session = (Session) await client.AuthenticateDeviceAsync(PlayerPrefs.GetString("deviceId"), PlayerPrefs.GetString("steamId"), true);
+                Session session = (Session) await client.AuthenticateSteamAsync(steamAuthTicket);
 
                 PlayerPrefs.SetString("nakama.refreshToken", session.RefreshToken);
                 PlayerPrefs.SetString("nakama.authToken", session.AuthToken);
@@ -82,15 +83,8 @@ namespace SteamClientMod
 
                 var account = await client.GetAccountAsync(session);
                 Debug.Log("Got user account: " + account.User.Username);
-                GSRequestData data = new GSRequestData();
-                data.AddString("liquidId", account.User.Id);
-                data.AddString("avatarUrl", account.User.AvatarUrl);
-                data.AddString("displayName", account.User.DisplayName);
-                data.AddString("playerId", account.User.Username);
 
-                GSRequestData resData = new GSRequestData();
-                resData.Add("profile", data);
-                GameLogic.Profile profile = JsonConvert.DeserializeObject<GameLogic.Profile>(resData.GetGSData("profile").JSON);
+                GameLogic.Profile profile = new RefreshBlockedProfiles_Patch().ConvertUserToProfile(account.User);
                 __instance.GetType().GetMethod("SuccessfulLogin", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, new object[] { session.AuthToken, profile });
                 __instance.CallOnUserIdUpdated(PlayerPrefs.GetString("steamId"));
                 onSuccess();
@@ -134,7 +128,7 @@ namespace SteamClientMod
 
     [HarmonyPatch(typeof(GameManager))]
     [HarmonyPatch("InitPlayerPrefs")]
-    public static class PlayerPrefs_Patch
+    public class PlayerPrefs_Patch
     {
         public static ManualLogSource logger;
 
@@ -152,7 +146,7 @@ namespace SteamClientMod
 
     [HarmonyPatch(typeof(LB_AchievementManager))]
     [HarmonyPatch("PullAchievementsGameSparks")]
-    public static class PullAchievementsGameSparks_Patch {
+    public class PullAchievementsGameSparks_Patch {
 
         public static bool Prefix(Action onSuccess = null, Action onFailure = null) 
         {
@@ -165,7 +159,7 @@ namespace SteamClientMod
 
     [HarmonyPatch(typeof(UserBlocker))]
     [HarmonyPatch("RefreshBlockedProfiles")]
-    public static class RefreshBlockedProfiles_Patch 
+    public class RefreshBlockedProfiles_Patch 
     {
 
         public static bool Prefix(UserBlocker __instance) 
@@ -176,32 +170,21 @@ namespace SteamClientMod
             List<GameLogic.Profile> AllBlockedUsers = new List<GameLogic.Profile>();
             foreach (IApiFriend friend in friendslistSync.Friends)
             {
-                AllBlockedUsers.Add(ConvertFriendToProfile(friend));
+                AllBlockedUsers.Add(new RefreshBlockedProfiles_Patch().ConvertUserToProfile(friend.User));
             }
             __instance.GetType().GetField("BlockedUsers", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(__instance, AllBlockedUsers);
             return false;
         }
 
-        public static GameLogic.Profile ConvertFriendToProfile(IApiFriend friend) {
+        public GameLogic.Profile ConvertUserToProfile(IApiUser user) {
             GSRequestData data = new GSRequestData();
-            data.AddString("liquidId", friend.User.Id);
-            data.AddString("avatarUrl", friend.User.AvatarUrl);
-            data.AddString("displayName", friend.User.DisplayName);
-            data.AddString("playerId", friend.User.Username);
+            data.AddString("liquidId", user.Username);
+            data.AddString("avatarUrl", user.AvatarUrl);
+            data.AddString("displayName", user.DisplayName);
+            data.AddString("playerId", user.Id);
             GSRequestData resData = new GSRequestData();
             resData.Add("profile", data);
             return JsonConvert.DeserializeObject<GameLogic.Profile>(resData.GetGSData("profile").JSON);
-        }
-    }
-
-    [HarmonyPatch(typeof(DefaultPlatform))]
-    [HarmonyPatch("Update")]
-    public static class HandleUserIDValidated_Patch
-    {
-
-        public static bool Prefix()
-        {
-            return false;
         }
     }
 }
