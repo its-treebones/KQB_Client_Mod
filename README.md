@@ -24,6 +24,13 @@ Removing
 ### Building yourself
 So you don't trust any old .dll that's thrown your way? That's great! All of the source code is in the `KQB_Client_Mod/source/KQBMods` directory. You can open that Solution file in Visual Studio Code. It was made with VS2019, not sure if it's compatible with other versions I'm not a C# developer.
 
+
+Get yourself a steam API key: [https://steamcommunity.com/dev/apikey]https://steamcommunity.com/dev/apikey
+and insert it as the value for line 20 of `SteamClientMod.cs`:
+```cs
+static string apiKey = "ABCDEFGHIJKLMNO";
+```
+
 You'll be missing references, so you'll need to copy relevant libraries from the game, but since those are not mine to distribute they are not added here. You should place any `.dll`s you need inside the `KQB_Client_Mod/source/KQBMods/Libraries` directory.
 
 After that, select "build solution" and grab your fresh off the press SteamClientMod.dll from inside `KQB_Client_Mod/Source/KQBMods/SteamClientMod/bin/Debug/SteamClientMod.dll`
