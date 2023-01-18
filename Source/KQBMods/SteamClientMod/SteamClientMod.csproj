@@ -79,7 +79,8 @@
     <Compile Include="GameSparksBasePlatformClient.cs" />
     <Compile Include="LB_AchievementManager.cs" />
     <Compile Include="NakamaUtils.cs" />
-    <Compile Include="SteamClientMod.cs" />
+    <Compile Include="NewsTicker.cs" />
+    <Compile Include="SteamClient.cs" />
     <Compile Include="SteamClientModPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserBlocker.cs" />

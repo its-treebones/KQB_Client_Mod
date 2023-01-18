@@ -73,14 +73,20 @@ namespace SteamClientMod
                 PlayerPrefs.SetString("nakama.refreshToken", session.RefreshToken);
                 PlayerPrefs.SetString("nakama.authToken", session.AuthToken);
 
-                Debug.Log("Authenticated with Device ID");
+                Debug.Log("Authenticated with Steam");
 
                 IApiAccount account = await client.GetAccountAsync(session);
                 Debug.Log("Got user account: " + account.User.Username);
                 NakamaUtils nku = new NakamaUtils();
                 GameLogic.Profile profile = nku.ConvertUserToProfile(account.User, session);
 
-                IApiStorageObjects objects = await client.ReadStorageObjectsAsync(session);
+                IApiStorageObjects objects = await client.ReadStorageObjectsAsync(session, new[] {
+                                                                                            new StorageObjectId {
+                                                                                                    Collection = "prefs",
+                                                                                                    Key = "party_prefs",
+                                                                                                    UserId = session.UserId
+                                                                                             }
+                                                                                             });
 
                 nku.AddPreferencesToProfile(profile, objects);
 
