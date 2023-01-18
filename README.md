@@ -2,13 +2,16 @@
 Restores steam name and profile picture.
 
 ### Installing
-1. Install BepInEx to load the mod [Download BepInEx](https://github.com/BepInEx/BepInEx/releases/download/v5.4.21/BepInEx_x64_5.4.21.0.zip)
+Windows:
+    1. Install BepInEx to load the mod [Download BepInEx](https://github.com/BepInEx/BepInEx/releases/download/v5.4.21/BepInEx_x64_5.4.21.0.zip)
 
-2. extract BepInEx and move `doorstop_config`, `winhttp.dll` and `BepInEx` to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black`
+    2. extract BepInEx and move `doorstop_config`, `winhttp.dll` and `BepInEx` to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black`
 
-3. Start KQB to initialize, then quit. There should now be a `Plugins` folder under `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\`
+    3. Start KQB to initialize, then quit. There should now be a `Plugins` folder under `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\`
 
-4. Clone this repo & copy `KQB_Client_Mod/Mods/SteamClientMod.dll` to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\Plugins`
+    4. Clone this repo & copy `KQB_Client_Mod/Mods/SteamClientMod.dll` to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\Plugins`
+---
+Mac & Linux: TODO
 
 Start the game and enjoy
 
@@ -25,7 +28,7 @@ Removing
 So you don't trust any old .dll that's thrown your way? That's great! All of the source code is in the `KQB_Client_Mod/source/KQBMods` directory. You can open that Solution file in Visual Studio Code. It was made with VS2019, not sure if it's compatible with other versions I'm not a C# developer.
 
 
-Get yourself a steam API key: [https://steamcommunity.com/dev/apikey]https://steamcommunity.com/dev/apikey
+Get yourself a steam API key: [https://steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey)
 and insert it as the value for line 20 of `SteamClientMod.cs`:
 ```cs
 static string apiKey = "ABCDEFGHIJKLMNO";
