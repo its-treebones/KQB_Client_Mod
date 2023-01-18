@@ -17,7 +17,7 @@ namespace SteamClientMod
     [HarmonyPatch("SteamAuth")]
     public static class SteamClient_Patch
     {
-
+        static string apiKey = "";
         static void Postfix(LiquidBit.KillerQueenX.SteamClient __instance, Action onSuccess, Action onFailure) 
         {
             if (GameManager.GMInstance.platformClient.GetAccount() == null || GameManager.GMInstance.platformClient.GetAccount().playerId == null || GameManager.GMInstance.platformClient.GetAccount().playerId != SteamUser.GetSteamID().ToString())
@@ -27,7 +27,7 @@ namespace SteamClientMod
         public static IEnumerator GetAvatarAndLogin()
         {
             string steamId = SteamUser.GetSteamID().ToString();
-            UnityWebRequestAsyncOperation async = new UnityWebRequest("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=XXXXXXXXXXXXXXXXXXXX&steamids=" + steamId)
+            UnityWebRequestAsyncOperation async = new UnityWebRequest("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + apiKey + "&steamids=" + steamId)
             {
                 method = "GET",
                 downloadHandler = ((DownloadHandler)new DownloadHandlerBuffer())
