@@ -10,6 +10,9 @@ namespace PanAudioMod
     class PanAudioMod
     {
         static bool Prefix(AudioEvent whichAudioEvent, float panPosition = 0f, MatchManager.EntityRelation entityRelation = MatchManager.EntityRelation.None, GameObject whichGameObject = null, Action callback = null) {
+            if (whichAudioEvent is null) {
+                return true;
+            }
             if (String.Equals("snd_dash", whichAudioEvent.name) || String.Equals("snd_attackMorningStar", whichAudioEvent.name))
             {
                 SimpleAudioEvent simpleAudioEvent = (SimpleAudioEvent)whichAudioEvent;
