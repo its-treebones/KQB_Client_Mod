@@ -2,7 +2,7 @@
 using LiquidBit.KillerQueenX;
 using System.Reflection;
 
-namespace SteamlessClientMod
+namespace LinuxServer
 {
     [HarmonyPatch(typeof(MockClient))]
     [HarmonyPatch("ValidateOwnership")]
@@ -16,4 +16,14 @@ namespace SteamlessClientMod
 
     }
 
+    [HarmonyPatch(typeof(UIManager))]
+    [HarmonyPatch("DirectConnectToServer")]
+    public static class ShowError_Patch
+    {
+        public static bool Prefix(UIManager __instance, string ipAddress, ushort port, bool loopback)
+        {
+            return false;
+        }
+
+    }
 }
