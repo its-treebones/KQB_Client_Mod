@@ -1,6 +1,9 @@
-﻿using HarmonyLib;
+﻿using GameLogic;
+using HarmonyLib;
 using LiquidBit.KillerQueenX;
+using NetLib;
 using System.Reflection;
+using UnityEngine;
 
 namespace LinuxServer
 {
@@ -23,6 +26,21 @@ namespace LinuxServer
         public static bool Prefix(UIManager __instance, string ipAddress, ushort port, bool loopback)
         {
             return false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(GameServer))]
+    [HarmonyPatch("Start")]
+    public static class StartServer_Patch
+    {
+        public static bool Prefix(GameServer __instance, GameServer.StartupConfig config, ServerConfig serverConfig)
+        {
+            if (GameManager.GMInstance.cvars.discordInstance != null)
+            {
+                config.bindAddress = GameManager.GMInstance.cvars.discordInstance;
+            }
+            return true;
         }
 
     }
