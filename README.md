@@ -14,16 +14,16 @@ Start the game and enjoy
 
 ---
 ## Uninstalling
-Removing SteamClientMod.dll from C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\plugins will uninstall the mod
-Removing 
+To uninstall PanAudioMod.dll, simply remove  C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\plugins\PanAudioMod.dll
+
+To completely uninstall BepInEx, remove the following objects:
  - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx
  - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\doorstop_config
  - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\winhttp.dll
  
- uninstalls the BepInEx and now your game is back to normal.
+now your game is back to normal.
  
 ---
-
 
 # LosersCanDanceMod.dll
 follow steps 1-3 in the install guide and copy `KQB_Client_Mod/Mods/LosersCanDanceMod.dll` to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\Plugins`
