@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using LiquidBit.KillerQueenX;
 using System.Reflection;
+using UnityEngine;
 
 namespace SteamlessClientMod
 {
